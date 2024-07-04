@@ -1,23 +1,18 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import skills from './routes/skill';
+import { PORT } from './config';
 
 const app = express();
-const port = 8000;
-const string = process.env.VITE_MONGOOSE_STRING || 'none';
 
-mongoose
-  .connect(string)
-  .then(() => {
-    console.log('connected to database');
-
-    app.listen(port, () => {
-      console.log('server running');
-    });
-  })
-  .catch(() => {
-    console.log('server fail');
-  });
+app.listen(PORT!, () => {
+  console.log(PORT);
+  console.log('listerning to port');
+});
 
 app.use(express.json());
 app.use('/api/skills', skills);
+app.get('/', (req, res) => {
+  console.log(req);
+  return res.status(234).send('mern');
+});

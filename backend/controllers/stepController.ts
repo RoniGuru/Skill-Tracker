@@ -1,4 +1,3 @@
-import { Step, StepSchema } from '../models/step.model';
 import { Request, Response } from 'express';
 import { Skill, SkillIf } from '../models/skill.model';
 

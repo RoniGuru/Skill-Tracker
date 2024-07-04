@@ -80,9 +80,10 @@ export const SkillSchema = new Schema(
       default: { name: 'Beginner_1', threshold: 120 },
     },
     steps: [StepSchema],
+    created: { type: Date, default: new Date() },
   },
   {
-    timestamps: true,
+    timestamps: false,
   }
 );
 

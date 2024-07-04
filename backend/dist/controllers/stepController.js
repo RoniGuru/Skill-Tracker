@@ -31,48 +31,12 @@ const createStep = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const { id } = req.params;
         const skill = yield skill_model_1.Skill.findById(id);
         if (!skill) {
-            res.status(500).json({ msg: 'skill not found' });
+            return res.status(500).json({ msg: 'skill not found' });
         }
-        const today = new Date();
-        const todayString = today.toDateString();
-        const lastStepDate = skill.lastStepDate
-            ? new Date(skill.lastStepDate)
-            : null;
-        const lastStepDateString = lastStepDate
-            ? lastStepDate.toDateString()
-            : null;
-        if (lastStepDateString !== todayString) {
-            if (lastStepDate) {
-                const diffTime = Math.abs(today.getTime() - lastStepDate.getTime());
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                if (diffDays === 1) {
-                    // Continue the streak
-                    skill.streak += 1;
-                }
-                else if (diffDays > 1) {
-                    // Missed a day, reset streak
-                    skill.streak = 1;
-                    skill.skill_level *= parseFloat(Math.pow(0.99, diffDays - 1).toFixed(2));
-                }
-            }
-        }
-        skill.steps.push(req.body);
-        skill.total_time += req.body.time;
-        skill.skill_level += parseFloat((req.body.time * (1 + skill.streak / 100)).toFixed(2));
-        if (skill.skill_level < skill.rank.threshold) {
-            skill.skill_level = skill.rank.threshold;
-        }
-        if (!skill.rank) {
-            skill.rank = (0, skill_model_2.calculateMastery)(skill.skill_level);
-        }
-        else {
-            skill.rank = (0, skill_model_2.calculateMastery)(skill.skill_level, {
-                name: skill.rank.name,
-                threshold: skill.rank.threshold,
-            });
-        }
-        if (skill.streak > skill.biggest_streak) {
-            skill.biggest_streak = skill.streak;
+        (0, skill_model_2.checkSkill)(skill);
+        (0, skill_model_2.addStep)(skill, req.body.time);
+        if (skill.skill_level > skill.nextRank.threshold) {
+            //skill!.updateRank();
         }
         yield skill.save();
         res.status(200).json({ msg: 'step added' });

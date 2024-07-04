@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var skill_model_1 = require("./models/skill.model");
-var stepController_1 = require("./controllers/stepController");
-var skills = [];
-var test_skill = new skill_model_1.Skill({ name: 'reading' });
-(0, stepController_1.addStep)(test_skill, 23);
+const skill_model_1 = require("./models/skill.model");
+const skill_model_2 = require("./models/skill.model");
+const skills = [];
+const test_skill = new skill_model_1.Skill({ name: 'reading' });
+(0, skill_model_2.addStep)(test_skill, 23);
 console.log(test_skill);
 // methods: {
 //     addStep(time: number) {

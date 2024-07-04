@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.streakCalculator = void 0;
-var streakCalculator = function (lastStepDate, currentStreak) {
-    var today = new Date();
+const streakCalculator = (lastStepDate, currentStreak) => {
+    const today = new Date();
     if (!isSameDay(today, lastStepDate)) {
-        var diffTime = Math.abs(today.getTime() - lastStepDate.getTime());
-        var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        const diffTime = Math.abs(today.getTime() - lastStepDate.getTime());
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         if (diffDays === 1) {
             // Continue the streak
             currentStreak += 1;
