@@ -23,11 +23,15 @@ export const getSkill = async (req: Request, res: Response) => {
 export const createSkill = async (req: Request, res: Response) => {
   try {
     console.log(req.body);
+    if (!req.body.name) {
+      return res.status(404).json({ msg: 'name is required' });
+    }
     const skill = await Skill.create(req.body);
 
-    res.status(200).json(skill);
+    await skill.save();
+    return res.status(200).json(skill);
   } catch (error: any) {
-    res.status(500).json({ msg: error.message });
+    return res.status(500).json({ msg: error.message });
   }
 };
 

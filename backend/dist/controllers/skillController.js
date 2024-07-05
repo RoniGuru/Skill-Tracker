@@ -35,11 +35,15 @@ exports.getSkill = getSkill;
 const createSkill = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         console.log(req.body);
+        if (!req.body.name) {
+            return res.status(404).json({ msg: 'name is required' });
+        }
         const skill = yield skill_model_1.Skill.create(req.body);
-        res.status(200).json(skill);
+        yield skill.save();
+        return res.status(200).json(skill);
     }
     catch (error) {
-        res.status(500).json({ msg: error.message });
+        return res.status(500).json({ msg: error.message });
     }
 });
 exports.createSkill = createSkill;
