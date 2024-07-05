@@ -4,7 +4,7 @@ const StepSchema = new Schema(
   {
     time: { type: Number, required: [true, 'Please enter time'] },
 
-    date: { type: Date, default: Date.now, required: true },
+    date: { type: Date, default: new Date(), required: true },
   },
   {
     timestamps: false,

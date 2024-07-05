@@ -14,6 +14,7 @@ const skill_model_1 = require("../models/skill.model");
 const getSkills = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const skills = yield skill_model_1.Skill.find({});
+        console.log('get');
         res.status(200).json(skills);
     }
     catch (error) {

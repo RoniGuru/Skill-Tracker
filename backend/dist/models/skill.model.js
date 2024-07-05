@@ -4,7 +4,7 @@ exports.Skill = exports.addStep = exports.checkSkill = exports.updateRank = expo
 const mongoose_1 = require("mongoose");
 const StepSchema = new mongoose_1.Schema({
     time: { type: Number, required: [true, 'Please enter time'] },
-    date: { type: Date, default: Date.now, required: true },
+    date: { type: Date, default: new Date(), required: true },
 }, {
     timestamps: false,
 });

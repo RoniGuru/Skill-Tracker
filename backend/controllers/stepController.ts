@@ -26,15 +26,16 @@ export const createStep = async (req: Request, res: Response) => {
     if (!skill) {
       return res.status(500).json({ msg: 'skill not found' });
     }
-    checkSkill(skill);
+    console.log('money');
     addStep(skill, req.body.time);
+    checkSkill(skill);
 
     if (skill!.skill_level > skill!.nextRank.threshold) {
-      //skill!.updateRank();
+      updateRank(skill);
     }
 
     await skill!.save();
-    res.status(200).json({ msg: 'step added' });
+    res.status(200).json(skill);
   } catch (error: any) {
     res.status(500).json({ msg: error.message });
   }
