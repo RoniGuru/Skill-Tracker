@@ -64,6 +64,9 @@ const skill_mastery = [
   { name: 'Master_4', threshold: 1080000 },
   { name: 'Master_5', threshold: 1200000 },
 ];
+const setPrice = (value: Number) => {
+  return parseFloat(value.toFixed(2));
+};
 export const SkillSchema = new Schema(
   {
     name: {
@@ -71,7 +74,7 @@ export const SkillSchema = new Schema(
       required: [true, 'Please enter skill name'],
     },
     total_time: { type: Number, default: 0 },
-    skill_level: { type: Number, default: 0 },
+    skill_level: { type: Number, default: 0, set: setPrice },
     streak: { type: Number, default: 1 },
     biggest_streak: { type: Number, default: 1 },
     rank: { type: RankSchema, default: { name: 'none', threshold: 0 } },
@@ -100,32 +103,13 @@ export interface SkillIf {
   updatedAt?: Date;
 }
 
-export const streakCalculator = (lastStepDate: Date, currentStreak: number) => {
-  const today = new Date();
-
-  if (!isSameDay(today, lastStepDate)) {
-    const diffTime = Math.abs(today.getTime() - lastStepDate.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays === 1) {
-      // Continue the streak
-      currentStreak += 1;
-    } else if (diffDays > 1) {
-      // Missed a day, reset streak
-      console.log(diffDays);
-      currentStreak = 1 - diffDays;
-    }
-  }
-  return currentStreak;
-};
-
-function isSameDay(date1: Date, date2: Date): boolean {
+export const isSameDay = (date1: Date, date2: Date) => {
   return (
     date1.getFullYear() === date2.getFullYear() &&
     date1.getMonth() === date2.getMonth() &&
     date1.getDate() === date2.getDate()
   );
-}
+};
 
 export const updateRank = (skill: SkillIf) => {
   const rank = skill_mastery.findIndex((l) => l.threshold >= skill.skill_level);
@@ -136,7 +120,7 @@ export const updateRank = (skill: SkillIf) => {
     if (skill_mastery[rank + 1]) {
       skill.nextRank = skill_mastery[rank + 1];
     } else {
-      skill.nextRank = { name: 'titan', threshold: 100000000 };
+      skill.nextRank = { name: 'Titan', threshold: 100000000 };
     }
   }
 };
@@ -153,9 +137,7 @@ export const checkSkill = (skill: SkillIf) => {
         skill.streak += 1;
       } else if (diffDays > 1) {
         skill.streak = 1;
-        const subtract_level = parseFloat(Math.pow(0.99, diffDays).toFixed(2));
-
-        skill.skill_level -= subtract_level > 100 ? 100 : subtract_level;
+        skill.skill_level -= calculateDecay(skill.skill_level, diffDays);
 
         if (skill.skill_level < skill.rank.threshold) {
           skill.skill_level = skill.rank.threshold;
@@ -167,7 +149,15 @@ export const checkSkill = (skill: SkillIf) => {
 
 export const addStep = (skill: SkillIf, time: number) => {
   skill.steps?.push({ time: time, date: new Date() });
+  skill.total_time += time;
   skill.skill_level += parseFloat((time * (1 + skill.streak / 100)).toFixed(2));
 };
+export const findDayDifference = (firstDate: Date, secondDate: Date) => {};
+export const calculateDecay = (level: number, days: number) => {
+  const decay = level * Math.pow(0.99, days - 1);
+  const difference = parseFloat((level - decay).toFixed(2));
+  const maxDecay = 120 * (days - 1);
 
+  return difference > maxDecay ? maxDecay : difference;
+};
 export const Skill = model('Skill', SkillSchema);

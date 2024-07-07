@@ -33,7 +33,6 @@ const createStep = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         if (!skill) {
             return res.status(500).json({ msg: 'skill not found' });
         }
-        console.log('money');
         (0, skill_model_2.addStep)(skill, req.body.time);
         (0, skill_model_2.checkSkill)(skill);
         if (skill.skill_level > skill.nextRank.threshold) {

@@ -26,7 +26,7 @@ export const createStep = async (req: Request, res: Response) => {
     if (!skill) {
       return res.status(500).json({ msg: 'skill not found' });
     }
-    console.log('money');
+
     addStep(skill, req.body.time);
     checkSkill(skill);
 

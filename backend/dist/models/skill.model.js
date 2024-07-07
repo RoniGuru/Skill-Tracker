@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Skill = exports.addStep = exports.checkSkill = exports.updateRank = exports.streakCalculator = exports.SkillSchema = void 0;
+exports.Skill = exports.calculateDecay = exports.findDayDifference = exports.addStep = exports.checkSkill = exports.updateRank = exports.isSameDay = exports.SkillSchema = void 0;
 const mongoose_1 = require("mongoose");
 const StepSchema = new mongoose_1.Schema({
     time: { type: Number, required: [true, 'Please enter time'] },
@@ -44,13 +44,16 @@ const skill_mastery = [
     { name: 'Master_4', threshold: 1080000 },
     { name: 'Master_5', threshold: 1200000 },
 ];
+const setPrice = (value) => {
+    return parseFloat(value.toFixed(2));
+};
 exports.SkillSchema = new mongoose_1.Schema({
     name: {
         type: String,
         required: [true, 'Please enter skill name'],
     },
     total_time: { type: Number, default: 0 },
-    skill_level: { type: Number, default: 0 },
+    skill_level: { type: Number, default: 0, set: setPrice },
     streak: { type: Number, default: 1 },
     biggest_streak: { type: Number, default: 1 },
     rank: { type: RankSchema, default: { name: 'none', threshold: 0 } },
@@ -63,29 +66,12 @@ exports.SkillSchema = new mongoose_1.Schema({
 }, {
     timestamps: false,
 });
-const streakCalculator = (lastStepDate, currentStreak) => {
-    const today = new Date();
-    if (!isSameDay(today, lastStepDate)) {
-        const diffTime = Math.abs(today.getTime() - lastStepDate.getTime());
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        if (diffDays === 1) {
-            // Continue the streak
-            currentStreak += 1;
-        }
-        else if (diffDays > 1) {
-            // Missed a day, reset streak
-            console.log(diffDays);
-            currentStreak = 1 - diffDays;
-        }
-    }
-    return currentStreak;
-};
-exports.streakCalculator = streakCalculator;
-function isSameDay(date1, date2) {
+const isSameDay = (date1, date2) => {
     return (date1.getFullYear() === date2.getFullYear() &&
         date1.getMonth() === date2.getMonth() &&
         date1.getDate() === date2.getDate());
-}
+};
+exports.isSameDay = isSameDay;
 const updateRank = (skill) => {
     const rank = skill_mastery.findIndex((l) => l.threshold >= skill.skill_level);
     if (rank === -1) {
@@ -97,7 +83,7 @@ const updateRank = (skill) => {
             skill.nextRank = skill_mastery[rank + 1];
         }
         else {
-            skill.nextRank = { name: 'titan', threshold: 100000000 };
+            skill.nextRank = { name: 'Titan', threshold: 100000000 };
         }
     }
 };
@@ -106,7 +92,7 @@ const checkSkill = (skill) => {
     if (skill.steps) {
         const lastDate = skill.steps[skill.steps.length - 1].date;
         const todayDate = new Date();
-        if (!isSameDay(todayDate, lastDate)) {
+        if (!(0, exports.isSameDay)(todayDate, lastDate)) {
             const diffTime = Math.abs(todayDate.getTime() - lastDate.getTime());
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
             if (diffDays === 1) {
@@ -114,8 +100,7 @@ const checkSkill = (skill) => {
             }
             else if (diffDays > 1) {
                 skill.streak = 1;
-                const subtract_level = parseFloat(Math.pow(0.99, diffDays).toFixed(2));
-                skill.skill_level -= subtract_level > 100 ? 100 : subtract_level;
+                skill.skill_level -= (0, exports.calculateDecay)(skill.skill_level, diffDays);
                 if (skill.skill_level < skill.rank.threshold) {
                     skill.skill_level = skill.rank.threshold;
                 }
@@ -127,7 +112,17 @@ exports.checkSkill = checkSkill;
 const addStep = (skill, time) => {
     var _a;
     (_a = skill.steps) === null || _a === void 0 ? void 0 : _a.push({ time: time, date: new Date() });
+    skill.total_time += time;
     skill.skill_level += parseFloat((time * (1 + skill.streak / 100)).toFixed(2));
 };
 exports.addStep = addStep;
+const findDayDifference = (firstDate, secondDate) => { };
+exports.findDayDifference = findDayDifference;
+const calculateDecay = (level, days) => {
+    const decay = level * Math.pow(0.99, days - 1);
+    const difference = parseFloat((level - decay).toFixed(2));
+    const maxDecay = 120 * (days - 1);
+    return difference > maxDecay ? maxDecay : difference;
+};
+exports.calculateDecay = calculateDecay;
 exports.Skill = (0, mongoose_1.model)('Skill', exports.SkillSchema);

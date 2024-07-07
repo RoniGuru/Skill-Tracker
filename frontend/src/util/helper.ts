@@ -5,7 +5,7 @@ export const formatDate = (date: Date): string => {
   const month = String(newDate.getMonth() + 1).padStart(2, '0'); // Months are 0-based
   const day = String(newDate.getDate()).padStart(2, '0');
 
-  const formattedDate = `${year}-${month}-${day}`;
+  const formattedDate = `${day}-${month}-${year}`;
 
   return formattedDate;
 };
