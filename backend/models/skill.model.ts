@@ -152,7 +152,14 @@ export const addStep = (skill: SkillIf, time: number) => {
   skill.total_time += time;
   skill.skill_level += parseFloat((time * (1 + skill.streak / 100)).toFixed(2));
 };
-export const findDayDifference = (firstDate: Date, secondDate: Date) => {};
+export const findDayDifference = (date1: Date, date2: Date) => {
+  let timeDiff = date2.getTime() - date1.getTime();
+
+  let dayDiff = Math.round(timeDiff / (1000 * 3600 * 24));
+
+  return Math.abs(dayDiff);
+};
+
 export const calculateDecay = (level: number, days: number) => {
   const decay = level * Math.pow(0.99, days - 1);
   const difference = parseFloat((level - decay).toFixed(2));

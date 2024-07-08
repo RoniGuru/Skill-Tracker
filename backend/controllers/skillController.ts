@@ -1,10 +1,10 @@
-import { Skill } from '../models/skill.model';
+import { checkSkill, Skill } from '../models/skill.model';
 import { Request, Response } from 'express';
 
 export const getSkills = async (req: Request, res: Response) => {
   try {
     const skills = await Skill.find({});
-    console.log('get');
+    skills.map((skill) => checkSkill(skill));
     res.status(200).json(skills);
   } catch (error: any) {
     res.status(500).json({ msg: error.message });

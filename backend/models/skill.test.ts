@@ -5,6 +5,7 @@ import {
   updateRank,
   addStep,
   calculateDecay,
+  findDayDifference,
 } from './skill.model';
 import { Skill } from '../models/skill.model';
 
@@ -21,6 +22,20 @@ describe('#checking same days', () => {
   });
 });
 
+describe('checking day difference', () => {
+  it('compare dates 10 days', () => {
+    let date1 = new Date('01/16/2024');
+    let date2 = new Date('01/26/2024');
+    expect(findDayDifference(date1, date2)).toBe(10);
+  });
+  it('compares now to 5 days ago', () => {
+    let date1 = new Date();
+    let date2 = new Date(date1);
+    date2.setDate(date2.getDate() - 5);
+
+    expect(findDayDifference(date1, new Date(date2))).toBe(5);
+  });
+});
 describe('#checking updateRank', () => {
   const skill = new Skill({ name: 'reading' });
   skill.skill_level = 120;
@@ -86,22 +101,30 @@ describe('#checking checkSkill', () => {
   it('check skill level decay 1 day', () => {
     skill.skill_level = 100;
     addStep(skill, 0);
+    let date = new Date(newDate);
+    date.setDate(date.getDate() - 1);
 
-    skill.steps[0].date.setDate(newDate.getDate() - 1);
+    skill.steps[0].date = date;
     checkSkill(skill);
     expect(skill.skill_level).toBe(99);
   });
   it('check skill level decay 2 days', () => {
     skill.skill_level = 100;
 
-    skill.steps[0].date.setDate(newDate.getDate() - 2);
+    let date = new Date(newDate);
+    date.setDate(date.getDate() - 2);
+
+    skill.steps[0].date = date;
     checkSkill(skill);
     expect(skill.skill_level).toBe(98.01);
   });
 
   it('check max decay', () => {
     skill.skill_level = 20000;
-    skill.steps[0].date.setDate(newDate.getDate() - 2);
+    let date = new Date(newDate);
+    date.setDate(date.getDate() - 2);
+
+    skill.steps[0].date = date;
     checkSkill(skill);
     expect(skill.skill_level).toBe(19760);
   });
