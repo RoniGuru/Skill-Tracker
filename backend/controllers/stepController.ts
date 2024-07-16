@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { Skill, SkillIf } from '../models/skill.model';
 
-import { checkSkill, addStep, updateRank } from '../models/skill.model';
+import { checkSkill, addStep, updateRank } from '../services/skillFunctions';
 
 export const getSteps = async (req: Request, res: Response) => {
   try {
@@ -28,7 +28,6 @@ export const createStep = async (req: Request, res: Response) => {
     }
 
     addStep(skill, req.body.time);
-    checkSkill(skill);
 
     if (skill!.skill_level > skill!.nextRank.threshold) {
       updateRank(skill);

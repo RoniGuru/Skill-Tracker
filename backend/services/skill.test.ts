@@ -6,7 +6,7 @@ import {
   addStep,
   calculateDecay,
   findDayDifference,
-} from './skill.model';
+} from './skillFunctions';
 import { Skill } from '../models/skill.model';
 
 describe('#checking same days', () => {
@@ -129,10 +129,14 @@ describe('#checking checkSkill', () => {
     expect(skill.skill_level).toBe(19760);
   });
 
-  //   it('check skill is not under threshold', () => {
-  //     updateRank(skill);
-  //     skill.skill_level = 3000;
-  //     checkSkill(skill);
-  //     expect(skill.skill_level).toBe(18000);
-  //   });
+  it('check skill level is not under threshold', () => {
+    const skill = new Skill({ name: 'studying' });
+    skill.skill_level = 18000;
+    updateRank(skill);
+    skill.skill_level = 3000;
+
+    checkSkill(skill);
+
+    expect(skill.skill_level).toBe(18000);
+  });
 });

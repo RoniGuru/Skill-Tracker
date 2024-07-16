@@ -1,5 +1,6 @@
-import { checkSkill, Skill } from '../models/skill.model';
+import { checkSkill } from '../services/skillFunctions';
 import { Request, Response } from 'express';
+import { Skill } from '../models/skill.model';
 
 export const getSkills = async (req: Request, res: Response) => {
   try {
