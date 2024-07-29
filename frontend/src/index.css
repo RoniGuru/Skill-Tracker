@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.addTime:hover {
+  color: rgb(239 68 68 / var(--tw-bg-opacity));
+  background-color: white;
+  transition: 0.3s ease-in-out;
+}

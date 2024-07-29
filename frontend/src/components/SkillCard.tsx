@@ -36,6 +36,7 @@ const SkillCard: React.FC<SkillComponentProps> = ({
             : null;
         }}
         size={35}
+        aria-label="delete skill Button"
       />
       <section className="flex flex-col justify-center items-center h-80">
         <h5 className="mb-10 text-2xl font-bold tracking-tight  h-28 ">
@@ -48,11 +49,17 @@ const SkillCard: React.FC<SkillComponentProps> = ({
       </section>
       <section className="h-48 flex flex-col justify-end  w-full">
         <div className="flex flex-row  item-end justify-between   items-center ">
-          <div className="flex flex-col justify-center items-center  w-1/3 gap-2">
+          <div
+            className="flex flex-col justify-center items-center  w-1/3 gap-2"
+            aria-label="skill minutes spent"
+          >
             <IoMdTime size={24} />
             {skill.total_time}
           </div>
-          <div className="rounded-full h-24 w-24   items-center justify-center flex flex-col bg-red-500 ">
+          <div
+            className="rounded-full h-24 w-24   items-center justify-center flex flex-col bg-red-500 "
+            aria-label="streak"
+          >
             <FaFire size={24} className="text-white" />
             {skill.streak}
           </div>
@@ -60,7 +67,7 @@ const SkillCard: React.FC<SkillComponentProps> = ({
             className="flex flex-col justify-center items-center w-1/3 gap-2"
             aria-label="skill level"
           >
-            <FaCloudscale size={24} data-tip="Skill level" />
+            <FaCloudscale size={24} />
 
             {skill.skill_level}
           </div>

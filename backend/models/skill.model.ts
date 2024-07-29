@@ -28,7 +28,7 @@ export interface StepIf {
   date: Date;
 }
 
-const setPrice = (value: Number) => {
+const formatSkillLevel = (value: Number) => {
   return parseFloat(value.toFixed(2));
 };
 export const SkillSchema = new Schema(
@@ -38,7 +38,7 @@ export const SkillSchema = new Schema(
       required: [true, 'Please enter skill name'],
     },
     total_time: { type: Number, default: 0 },
-    skill_level: { type: Number, default: 0, set: setPrice },
+    skill_level: { type: Number, default: 0, set: formatSkillLevel },
     streak: { type: Number, default: 1 },
     biggest_streak: { type: Number, default: 1 },
     rank: { type: RankSchema, default: { name: 'none', threshold: 0 } },

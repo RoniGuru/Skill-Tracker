@@ -79,6 +79,12 @@ describe('#checking add step', () => {
       skill.skill_level,
     ]).toStrictEqual([2, 25, 25.45]);
   });
+
+  it('add 2 consecutive days ', () => {
+    const skill = new Skill({ name: 'basketball' });
+    let baseDate = new Date();
+    skill.steps?.push({ time: 10, date: new Date() });
+  });
 });
 
 describe('checking skill decay', () => {

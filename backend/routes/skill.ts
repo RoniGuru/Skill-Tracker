@@ -5,9 +5,9 @@ import {
   getSkills,
   updateSkill,
   createSkill,
+  createStep,
+  getSteps,
 } from '../controllers/skillController';
-
-import { createStep, getSteps } from '../controllers/stepController';
 
 const router = express.Router();
 

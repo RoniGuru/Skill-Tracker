@@ -51,7 +51,7 @@ export const addStep = (skill: SkillIf, time: number) => {
   skill.steps?.push({ time: time, date: new Date() });
   skill.total_time += time;
   checkSkill(skill);
-  skill.skill_level += parseFloat((time * (1 + skill.streak / 100)).toFixed(2));
+  skill.skill_level += Number((time * (1 + skill.streak / 100)).toFixed(2));
 };
 export const findDayDifference = (date1: Date, date2: Date) => {
   let timeDiff = date2.getTime() - date1.getTime();
@@ -63,7 +63,7 @@ export const findDayDifference = (date1: Date, date2: Date) => {
 
 export const calculateDecay = (level: number, days: number) => {
   const decay = level * Math.pow(0.99, days - 1);
-  const difference = parseFloat((level - decay).toFixed(2));
+  const difference = Number((level - decay).toFixed(2));
   const maxDecay = 120 * (days - 1);
 
   return difference > maxDecay ? maxDecay : difference;

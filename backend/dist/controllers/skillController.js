@@ -9,70 +9,116 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateSkill = exports.deleteSkill = exports.createSkill = exports.getSkill = exports.getSkills = void 0;
+exports.createStep = exports.getSteps = exports.updateSkill = exports.deleteSkill = exports.createSkill = exports.getSkill = exports.getSkills = void 0;
+const skillFunctions_1 = require("../services/skillFunctions");
 const skill_model_1 = require("../models/skill.model");
-const getSkills = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getSkills = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const skills = yield skill_model_1.Skill.find({});
-        console.log('get');
-        res.status(200).json(skills);
+        skills.map((skill) => (0, skillFunctions_1.checkSkill)(skill));
+        return res.status(200).json(skills);
     }
-    catch (error) {
-        res.status(500).json({ msg: error.message });
+    catch (err) {
+        if (err instanceof Error) {
+            err.message = 'error checking the skills';
+        }
+        next(err);
     }
 });
 exports.getSkills = getSkills;
-const getSkill = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getSkill = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
         const skill = yield skill_model_1.Skill.findById(id);
         res.status(200).json(skill);
     }
-    catch (error) {
-        res.status(500).json({ msg: error.message });
+    catch (err) {
+        if (err instanceof Error && err.message != '') {
+            err.message = 'error getting a skill';
+        }
+        next(err);
     }
 });
 exports.getSkill = getSkill;
-const createSkill = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const createSkill = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         console.log(req.body);
-        if (!req.body.name) {
-            return res.status(404).json({ msg: 'name is required' });
-        }
         const skill = yield skill_model_1.Skill.create(req.body);
         yield skill.save();
         return res.status(200).json(skill);
     }
-    catch (error) {
-        return res.status(500).json({ msg: error.message });
+    catch (err) {
+        if (err instanceof Error) {
+            err.message = 'error creating a skill';
+        }
+        next(err);
     }
 });
 exports.createSkill = createSkill;
-const deleteSkill = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const deleteSkill = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
         const skill = yield skill_model_1.Skill.findByIdAndDelete(id);
-        if (!skill) {
-            return res.status(404).json({ message: 'skill not found' });
-        }
         res.status(200).json({ msg: 'skill deleted' });
     }
-    catch (error) {
-        res.status(500).json({ msg: error.message });
+    catch (err) {
+        if (err instanceof Error) {
+            err.message = 'error deleting a skill';
+        }
+        next(err);
     }
 });
 exports.deleteSkill = deleteSkill;
-const updateSkill = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const updateSkill = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
         const skill = yield skill_model_1.Skill.findByIdAndUpdate(id, req.body);
-        if (!skill) {
-            return res.status(404).json({ message: 'skill not found' });
-        }
         res.status(200).json({ msg: 'skill updated' });
     }
-    catch (error) {
-        res.status(500).json({ msg: error.message });
+    catch (err) {
+        if (err instanceof Error) {
+            err.message = 'error updating a skill';
+        }
+        next(err);
     }
 });
 exports.updateSkill = updateSkill;
+const getSteps = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const skill = yield skill_model_1.Skill.findById(id);
+        res.status(200).json(skill.steps);
+    }
+    catch (err) {
+        if (err instanceof Error) {
+            err.message = 'error getting a skill steps';
+        }
+        next(err);
+    }
+});
+exports.getSteps = getSteps;
+const createStep = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const skill = yield skill_model_1.Skill.findById(id);
+        if (!skill) {
+            console.log('in loop');
+            const error = new Error('skill is not found');
+            error.status = 404;
+            throw error;
+        }
+        (0, skillFunctions_1.addStep)(skill, req.body.time);
+        if (skill.skill_level > skill.nextRank.threshold) {
+            (0, skillFunctions_1.updateRank)(skill);
+        }
+        yield skill.save();
+        res.status(200).json(skill);
+    }
+    catch (err) {
+        if (err instanceof Error && err.message.length == 0) {
+            err.message = 'error creating a skill steps';
+        }
+        next(err);
+    }
+});
+exports.createStep = createStep;
