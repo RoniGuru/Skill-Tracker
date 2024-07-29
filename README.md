@@ -4,7 +4,7 @@
 
 Skill tracker is a web app that allows users to record
 their skills and time spent on that skill. The inspiration was
-from reading atomic habbits where 1% everyday becomes a huge improvement in a long term and 1% decay becomes a a huge loss.
+from reading atomic habits where 1% everyday becomes a huge improvement in a long term and 1% decay becomes a a huge loss.
 
 Each skill has time spent and skill level.Skill level can be affected by decay when you miss a day. Skills also have a streak system that resets when you miss out a day. The streak applies a multiplier to the time added that is then converted to skill level.
 
